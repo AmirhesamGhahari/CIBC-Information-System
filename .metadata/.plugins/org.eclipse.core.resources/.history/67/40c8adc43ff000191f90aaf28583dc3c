@@ -1,0 +1,159 @@
+package CIBC_Design;
+
+/**
+ * @author ahesam.gh
+ *
+ *class credit account which is a specific class of accounts while extending abstract class account.
+ */
+public class CreditAccount extends Account {
+	
+	/**
+	 * penalty of exceeded credit limit
+	 */
+	public static final int CREDIT_LIMIT_EXCEED = 29;
+	/**
+	 * the threshold credit for making a credit account high or low
+	 */
+	public static final int CREDIT_TYPE_TRESHOLD = 1000;
+	/**
+	 * type of this account
+	 */
+	public static final String ACCOUNT_TYPE = "Credit";
+	
+	
+	
+	/**
+	 * the type of this credit account.
+	 * 1 for high credit account (more that 1000$ credit)
+	 * 2 for low credit account (less that 1000$ credit)
+	 */
+	private int creditType;
+	/**
+	 * the amount of credit limit of this account
+	 */
+	private double creditLimit;
+	
+	
+	
+	
+	/**
+	 * @param client1 owning the account
+	 * 
+	 * initiate the credit account with a client arguement and setting the credit limit to 500$ and credit
+	 * type to 2
+	 */
+	public CreditAccount(Client client1)
+	{
+		super(client1);
+		creditType = 2;
+		creditLimit = 500;
+	}
+	
+	public CreditAccount(Account ac1)
+	{
+		super(ac1);
+		CreditAccount newcCA1 = (CreditAccount) ac1;
+		this.creditLimit = newcCA1.creditLimit;
+		this.creditType = newcCA1.creditType;
+	}
+	
+	
+	/**
+	 * @param amount of credit limit for this account
+	 * 
+	 * set this account's credit limit to this amount.
+	 * notice that this method has to be called once after an object of this class is constructed and no more.
+	 * also this method sets the creit type of this object based on this credit limit amount to 1 or 2;
+	 */
+	public void setCreditLimit(double amount)
+	{
+		if(amount < 0)
+		{
+			throw new IllegalArgumentException("credit amount has to be positive.");
+		}
+		
+		this.creditLimit = amount;
+		
+		if(this.creditLimit > CreditAccount.CREDIT_TYPE_TRESHOLD)
+		{
+			this.creditType = 1;
+		}
+		
+	}
+	/**
+	 * return the type of this account
+	 */
+	@Override
+	public String getAccountType()
+	{
+		return CreditAccount.ACCOUNT_TYPE;
+	}
+	/**
+	 * override the Account class
+	 * withdraw the custom amount from this account.
+	 * throws IllegalArgumentException if amount is suspended or amount is negative.
+	 * throws IllegalArgumentException if balance becomes less than allowed value.
+	 */
+	@Override
+	public void withdraw(double amount)
+	{
+		if(this.isSuspended)
+		{
+			throw new IllegalArgumentException("your account is suspended.");
+		}
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("withdraw amount has to be positive.");
+		}
+		if(this.creditType == 2 && this.balance + this.creditLimit < amount)
+		{
+			throw new IllegalArgumentException("you cant do this transaction cause you dont have enough credit.");
+		}
+		if(this.creditType == 1 && this.balance + this.creditLimit < amount)
+		{
+			this.balance -= CreditAccount.CREDIT_LIMIT_EXCEED;
+			throw new IllegalArgumentException("you cant do this transaction cause you dont have enough credit.");
+		}
+		
+		this.balance -= amount;
+	}
+	/**
+	 *override the Account class
+	 * @param account1 account that money will be transfered to.
+	 * @param amount that will be transfered.
+	 * 
+	 * abstract method responsible for transferring a custom amount from this account to a destination account
+	 * 
+	 */
+	@Override
+	public void transfer(Account account1, double amount)
+	{
+		this.withdraw(amount);
+		account1.deposit(amount);
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * @return the type of this credit account
+	 */
+	public int getCreditType()
+	{
+		return this.creditType;
+	}
+	/**
+	 * @return the credit limit amount of this account
+	 */
+	public double getCreditLimit()
+	{
+		return this.creditLimit;
+	}
+	
+	
+	
+	
+	
+}

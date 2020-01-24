@@ -1,0 +1,86 @@
+package CIBC_Design;
+
+import java.util.Random;
+
+public abstract class Account {
+	
+	protected Client owner;
+	protected boolean isSuspended;
+	protected int cardNumber;
+	protected double balance;
+	
+	
+	public Account(Client o1)
+	{
+		this.owner = o1;
+		this.createAccount();
+		
+	}
+	
+	
+	private final void createAccount()
+	{
+		Random rand = new Random();
+		int n1 = rand.nextInt(90000000) + 10000000;
+		this.cardNumber = n1;
+		
+		isSuspended = false;
+		balance = 0;
+	}
+	
+	
+	public void suspend()
+	{
+		this.isSuspended = true;
+	}
+	public void reactivate()
+	{
+		this.isSuspended = false;
+	}
+	public void deposit(double amount)
+	{
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("you cant deposit negative amount");
+		}
+		this.balance += amount;
+	}
+	public double getBalance()
+	{
+		return this.balance;
+	}
+	public DemandLoanAccount terminate()
+	{
+		return new DemandLoanAccount(this.owner, this.balance);
+	}
+	
+	
+	
+	
+	
+	
+	public int getCardNumber()
+	{
+		return this.cardNumber;
+	}
+	public Client getClient()
+	{
+		return this.owner;
+	}
+	public boolean isCardSuspended()
+	{
+		return isSuspended;
+	}
+	
+	
+
+	
+	
+	public abstract void withdraw(double amount);
+	public abstract String getAccountType();
+	public abstract void transfer(Account account1, double amount);
+	
+
+	
+
+}

@@ -1,0 +1,39 @@
+package CIBC_Design;
+
+public class TestThird {
+
+	public static void main(String[] args) {
+	
+		
+		
+		Client c1 = new Client(1111, "AmirHesam");
+		Client c2 = new Client(1112, "Rana");
+		
+		CheckingAccount ca1 = new CheckingAccount(c1);
+		CheckingAccount ca2 = new CheckingAccount(c2);
+		ca1.setOverdraftOption(2);
+		ca1.setOverdraftLimit(1000);
+		
+		System.out.println(AccountActivity.ACTIVITY_LOG.size());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(1).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(2).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAccountType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getAccountType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAmount());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getDestinatedAccount());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getAccount().getAccountNumber());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAccount().getAccountNumber());
+
+
+
+
+
+
+
+
+
+	}
+
+}

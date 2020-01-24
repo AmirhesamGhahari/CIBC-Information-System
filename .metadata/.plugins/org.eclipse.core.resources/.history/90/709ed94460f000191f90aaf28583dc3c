@@ -1,0 +1,22 @@
+package CIBC_Design;
+
+public class TestThird {
+
+	public static void main(String[] args) {
+	
+		
+		
+		Client c1 = new Client(1111, "AmirHesam");
+		Client c2 = new Client(1112, "Rana");
+		
+		CheckingAccount ca1 = new CheckingAccount(c1);
+		CheckingAccount ca2 = new CheckingAccount(c2);
+		ca1.setOverdraftOption(2);
+		ca1.setOverdraftLimit(1000);
+		
+		System.out.println(AccountActivity.ACTIVITY_LOG.size());
+
+
+	}
+
+}

@@ -1,0 +1,279 @@
+package CIBC_Design;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.io.*;
+
+/**
+ * Checking Class invariant: Balance = deposits - withdrawals - overdraft
+ * 
+ */
+
+enum Overdraft {
+    NONE, PAY_PER_USE, MONTHLY
+}
+
+enum Status {
+    ACTIVE, SUSPENDED, CANCELLED
+}
+
+public class Checking {
+    private double balance;
+    private ArrayList<AccountActivity> accountLog;
+    // for records wouldn't this be unique to each instance of checking????
+    private int socialNumber;
+
+    private Overdraft overdraftPolicy = Overdraft.NONE;
+    private double overdraftRate = 0.21;
+    private double overdraftLimit;
+    private Status accountStatus;
+
+    // fees if overdraft protection is taken
+    public static double FIXED_FEE = 4.00;
+    public static double PER_USE_FEE = 5.00;
+    public static double NSF_FEE = 25.00;
+
+    class AccountActivity {
+        private LocalDateTime date;
+        private String action;
+        private double bal;
+
+        AccountActivity(String action, double bal) {
+            this.date = LocalDateTime.now();
+            this.action = action;
+            this.bal = bal;
+        }
+
+        public LocalDateTime getDate() {
+            return this.date;
+        }
+
+        @Override
+        public String toString() {
+            return "AccountActivity [action=" + action + ", date=" + date + ", bal=" + bal + "]";
+        }
+        
+    }
+
+    public Checking(double balance, Overdraft overdraftPolicy, double overdraftLimit, int sin) {
+        this.balance = balance;
+        this.overdraftPolicy = overdraftPolicy;
+        this.overdraftLimit = overdraftLimit;
+        this.socialNumber = sin;
+        accountStatus = Status.ACTIVE;
+        accountLog = new ArrayList<>();
+        this.accountLog.add(new AccountActivity("Account Creation: " + this.socialNumber, getBalance()));
+
+    }
+
+    public Checking(double balance, int sin) {
+        this(balance, Overdraft.NONE, 0.0, sin);
+    }
+
+    // pre: amount >= 0
+    // post: if funds available then: balance = old balance - amount
+    // if no funds available then: balance = old balance = NSF_FEE
+    // if per use policy: balance -= PER_USE_FEE
+    public boolean withdrawAmount(double amount) {
+        boolean result = false;
+        if (amount <= balance) 
+        {
+            balance -= amount;
+            result = true;
+        }
+        else if ((balance + overdraftLimit) >= amount && overdraftPolicy != Overdraft.NONE) 
+        {
+            balance -= amount;
+            if (overdraftPolicy == Overdraft.PAY_PER_USE) 
+            {
+                balance -= Checking.PER_USE_FEE;
+            }
+            result = true;
+        }
+        else
+        {
+            balance -= NSF_FEE;
+        }
+        
+        this.accountLog.add(new AccountActivity("Withdrawal - " + result, getBalance()));
+        return result;
+    }
+
+    // pre: amount >= 0
+    // post: balance = old balance + amount
+    public double depositAmount(double amount) {
+        balance += amount;
+        this.accountLog.add(new AccountActivity("Deposit", getBalance()));
+        return balance;
+    }
+
+    // pre: a valid amount to transfer that is greater than the balance + overdraft
+    // limit and >0
+    // a valid account to transfer to
+    // post: this account -= tranfer amount
+    // other account += tranfer amount
+    public void transferAmount(double amount, Checking account) {
+        this.withdrawAmount(amount);
+        account.depositAmount(amount);
+        this.accountLog.add(new AccountActivity("Transfer", getBalance()));
+    }
+
+    // pre: must select a valid overdraft policy
+    // post: account created with said policy and default values
+    public static Checking createAccount(Overdraft overdraftPolicy, int sin) {
+        double limit = 0.0;
+        if (overdraftPolicy != Overdraft.NONE) {
+            limit = 100.0;
+        }
+        return new Checking(0, overdraftPolicy, limit, sin);
+    }
+
+    // pre: account to cancel cannot have a negative balance
+    // post: account status set to Cancelled
+    public void cancelAccount() {
+        this.setAccountStatus(Status.CANCELLED);
+        this.accountLog.add(new AccountActivity("Account Cancellation", getBalance()));
+    }
+
+    // pre: account to suspend cannot have a negative balance
+    // post: account status set to Suspended
+    public void suspendAccount() {
+        this.setAccountStatus(Status.SUSPENDED);
+        this.accountLog.add(new AccountActivity("Account Suspended", getBalance()));
+    }
+
+    // pre: account to reactivate must be of type suspended
+    // post: account status now active
+    public void reactivateAccount() {
+        this.setAccountStatus(Status.ACTIVE);
+        this.accountLog.add(new AccountActivity("Account Reactivation", getBalance()));
+    }
+
+    // pre: supply a valid non-cancelled account
+    // post: account status = cancelled
+    // if negative balance existed then a demand loan account is created and
+    // returned
+    // public DemandLoan terminateAccount(Checking account) {
+    //     double bal = account.getBalance();
+    //     result = null;
+    //     if (bal < 0) {
+    //         account.depositAmount(-bal);
+    //         account.cancelAccount(account);
+    //         result = new DemandLoan(bal);
+    //     }
+    //     this.accountLog.add(new AccountActivity("Account Termination", getBalance()));
+    //     return result;
+    // }
+
+    public Overdraft getOverdraftPolicy() {
+        return overdraftPolicy;
+    }
+
+    // pre: a valid account and valid overdraft policy
+    // post: account overdraft policy = new policy
+    public void setOverdraftOption(Overdraft overdraftPolicy) {
+        this.overdraftPolicy = overdraftPolicy;
+        this.accountLog.add(new AccountActivity("Overdraft Policy Changed: " + overdraftPolicy, getBalance()));
+    }
+
+    public double getOverdraftLimit() {
+        return overdraftLimit;
+    }
+
+    // pre: a valid limit >= 0,
+    // limit cannot be less than an existing overdraft balance on the account: new
+    // limit >= -balance
+    // post: account limit = new limit
+    public void setLimit(double overdraftLimit) {
+        this.overdraftLimit = overdraftLimit;
+        this.accountLog.add(new AccountActivity("Overdraft Limit Change: " + overdraftLimit, getBalance()));
+    }
+
+    public double getBalance() {
+        return Math.round(balance * 100)/100.0;
+    }
+
+    public Status getAccountStatus() {
+        return accountStatus;
+    }
+
+    // pre: can only be performed on a non-cancelled account
+    // post: account status = new status
+    private void setAccountStatus(Status accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
+    public void sortAccountLog(ArrayList<AccountActivity> unsorted) {
+        int n = unsorted.size();
+        for (int i = 1; i < n; i++) {
+            LocalDateTime current = unsorted.get(i).getDate();
+            int j = i - 1;
+
+            while (j >= 0 && unsorted.get(j).getDate().compareTo(current) > 0) {
+                unsorted.set(j + 1, unsorted.get(j));
+                j -= 1;
+            }
+            unsorted.set(j + 1, unsorted.get(i));
+        }
+    }
+
+    // process end of month to add the interest for accounts still in overdraft
+    public void processAccountLogEndOfMonth() {
+        if (balance < 0) {
+            double interest = (getOverdraftRate() / 12);
+            withdrawAmount(balance * interest);
+        }
+        if (overdraftPolicy == Overdraft.MONTHLY) {
+            withdrawAmount(Checking.FIXED_FEE);
+        }
+    }
+
+    // save log to file
+    public void saveAccountLog() {
+        File file = new File("save.txt");
+        try {
+            file.mkdirs();
+            file.createNewFile();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try{
+        PrintWriter pw = new PrintWriter(new FileOutputStream("save.txt"));
+        for (AccountActivity entry : accountLog)
+            pw.println(entry);
+        pw.close();
+        }
+        catch(FileNotFoundException fnfe) {
+            System.out.println(fnfe);
+        }
+
+    }
+
+    public double getOverdraftRate() {
+        return overdraftRate;
+    }
+
+    public void setOverdraftRate(double overdraftRate) {
+		this.overdraftRate = overdraftRate;
+    }
+
+    public static void main(String[] args) {
+        Checking tester = Checking.createAccount(Overdraft.MONTHLY, 123456789);
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.depositAmount(1000.00);
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.suspendAccount();
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.reactivateAccount();
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.withdrawAmount(500.00);
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.withdrawAmount(525.00);
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.withdrawAmount(525.00);
+        System.out.println(tester.accountLog.get(tester.accountLog.size()-1));
+        tester.saveAccountLog();
+    }
+}

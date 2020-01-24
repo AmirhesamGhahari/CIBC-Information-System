@@ -1,0 +1,52 @@
+package CIBC_Design;
+
+/**
+ * @author ahesam.gh
+ * 
+ * create a DemandLoanAccount object for a client who is terminating their account 
+ * by use of their personal information taken from Client object and the due amount.
+ *
+ */
+public class DemandLoanAccount {
+	
+	
+	/**
+	 * amount of Demand Loan
+	 */
+	private double amount;
+	
+	/**
+	 * client responsible for this loan
+	 */
+	private Client client;
+	
+	/**
+	 * @param c1 object client
+	 * @param d1 due of of client
+	 * 
+	 * initiate an DemandLoanAccount object by a client object and its due amount
+	 */
+	public DemandLoanAccount(Client c1, double d1)
+	{
+		this.client = c1;
+		this.amount = d1;
+	}
+	
+	/**
+	 * @return the due amount of this loan
+	 */
+	public double getAmount()
+	{
+		return this.amount;
+	}
+	
+	
+	/**
+	 * @return the client object responsible for this loan
+	 */
+	public Client getClient()
+	{
+		return this.client;
+	}
+
+}

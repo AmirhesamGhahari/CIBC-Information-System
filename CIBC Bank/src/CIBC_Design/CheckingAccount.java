@@ -1,0 +1,208 @@
+package CIBC_Design;
+
+import java.io.Serializable;
+
+/**
+ * @author ahesam.gh
+ * 
+ * class checking account which is a specific class of accounts while extending abstract class account.
+ *
+ */
+public class CheckingAccount extends Account implements Serializable {
+	
+	/**
+	 * penalty amount of non sufficient transaction.
+	 */
+	public static final int NON_SUFFICIENT_FEE = 5;
+	/**
+	 * the yearly interest rate of indebtness amount for this type of accounts
+	 */
+	public static final double YEARLY_INTEREST_RATE = 0.21;
+	/**
+	 * monthly fixed fee of overdraft.
+	 */
+	public static final int MONTHLY_FIXED_FEE = 4;
+	/**
+	 * pay per use fee of overdraft.
+	 */
+	public static final int PAY_PER_USE = 5;
+	/**
+	 * account type of objects of this class.
+	 */
+	public static final String ACCOUNT_TYPE = "Checking";
+	
+	
+
+	
+	/**
+	 * int variable keeping the overdraft option for this checking account.
+	 * 1 for no overdraft option
+	 * 2 for monthly fixed fee option
+	 * 3 for pay per use option.
+	 * 
+	 */
+	private int overdraftOption;
+	/**
+	 * the amount of granted overdraft limit
+	 */
+	private double overdraftLimit;
+	
+	
+	
+	
+	/**
+	 * @param client1 owning this account
+	 * initiate a checking account object by a client argument and initializing overdraft option to 1 and 
+	 * therefore overdraft limit to 0.
+	 */
+	public CheckingAccount(Client client1)
+	{
+		super(client1);
+		overdraftOption = 1;
+		overdraftLimit= 0;
+		
+		new AccountActivity(this, 3, this.balance);
+	}
+	
+	/**
+	 * @param ac1 account which is going to be copied.
+	 * 
+	 * copy constructor which is only used by the accountactivity class to copy an object of class checkingaccount to
+	 * keep its object for holding it in the activitylog sequence.
+	 * therefore it does not make an accountactivity object.
+	 */
+	public CheckingAccount(Account ac1)
+	{
+		super(ac1);
+		CheckingAccount newCA1 = (CheckingAccount) ac1;
+		this.overdraftLimit = newCA1.overdraftLimit;
+		this.overdraftOption = newCA1.overdraftOption;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * @param amount that is set for overdraft limit of this account
+	 * 
+	 * set this account's overdraft limit to this amount.
+	 * notice that this method has to be called once after an object of this class is constructed and no more.
+	 * also this method has to be called along with setOverdraftOption method.
+	 */
+	public void setOverdraftLimit(double amount)
+	{
+		if( amount < 0)
+		{
+			throw new IllegalArgumentException("limit of overdraft has to be positive.");
+		}
+		
+		this.overdraftLimit = amount;
+		new AccountActivity(this, 10, this.overdraftOption, this.balance, amount);
+		
+		
+	}
+	/**
+	 * @param option of overdraft (1 or 2 or 3)
+	 * set the overdraft option of this account.
+	 * notice that this method has to be called once after an object of this class is constructed.
+	 */
+	public void setOverdraftOption(int option)
+	{
+		if(option > 3 || option < 1)
+		{
+			throw new IllegalArgumentException("there is only 3 available overdraft options you can choose.");
+		}
+		this.overdraftOption = option;
+		new AccountActivity(this, 9, option, this.balance);
+	}
+	/**
+	 * override the Account class
+	 * return the type of this account.
+	 */
+	@Override
+	public String getAccountType()
+	{
+		return CheckingAccount.ACCOUNT_TYPE;
+	}
+	/**
+	 * override the Account class
+	 * withdraw the custom amount from this account.
+	 * throws IllegalArgumentException if amount is suspended or amount is negative.
+	 * throws IllegalArgumentException if balance becomes less than allowed value.
+	 * 
+	 */
+	@Override
+	public void withdraw(double amount)
+	{
+		if(this.isSuspended)
+		{
+			throw new IllegalArgumentException("your account is suspended.");
+		}
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("withdraw amount has to be positive.");
+		}
+		if(this.overdraftOption == 1 && this.balance - amount < 0)
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			new AccountActivity(this, 1, amount, false, this.balance);
+			throw new IllegalArgumentException("you cant do this transaction cause it makes your balance negative.");
+		}
+		if(this.overdraftOption == 2 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			new AccountActivity(this, 1, amount, false, this.balance);
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		if(this.overdraftOption == 3 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			new AccountActivity(this, 1, amount, false, this.balance);
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		this.balance -= amount;
+		new AccountActivity(this, 1, amount, true, this.balance);
+	}
+	/**
+	 * override the Account class
+	 * @param account1 account that money will be transfered to.
+	 * @param amount that will be transfered.
+	 * 
+	 * abstract method responsible for transferring a custom amount from this account to a destination account
+	 * 
+	 */
+	@Override
+	public void transfer(Account account1, double amount)
+	{
+		new AccountActivity(this, 11, account1, amount);
+		this.withdraw(amount);
+		account1.deposit(amount);
+		
+	}
+	
+	
+	
+	
+	
+	/**
+	 * @return the overdraft limit of this account
+	 */
+	public double getOverdraftLimit()
+	{
+		return this.overdraftLimit;
+	}
+	/**
+	 * @return overdraft option of this account.
+	 */
+	public int getOverdraftOption()
+	{
+		return this.overdraftOption;
+	}
+	
+	
+	
+	
+	
+
+}

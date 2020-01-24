@@ -1,0 +1,98 @@
+package CIBC_Design;
+
+
+public class CheckingAccount extends Account {
+	
+	public static final int NON_SUFFICIENT_FEE = 25;
+	public static final int MONTHLY_FIXED_FEE = 4;
+	public static final int PAY_PER_USE = 5;
+	public static final String ACCOUNT_TYPE = "Checking";
+	
+	
+	private int overdraftOption;
+	private double overdraftLimit;
+	
+	
+	
+	public CheckingAccount(Client client1)
+	{
+		super(client1);
+		overdraftOption = 1;
+		overdraftLimit= 0;
+	}
+	
+	public void setOverdraftLimit(double amount)
+	{
+		if( amount < 0)
+		{
+			throw new IllegalArgumentException("limit of overdraft has to be positive.");
+		}
+		
+		this.overdraftLimit = amount;
+		
+	}
+	public void setOverdraftOption(int option)
+	{
+		if(option > 3 || option < 1)
+		{
+			throw new IllegalArgumentException("there is only 3 available overdraft options you can choose.");
+		}
+		this.overdraftOption = option;
+	}
+	public String getAccountType()
+	{
+		return CheckingAccount.ACCOUNT_TYPE;
+	}
+	public void withdraw(double amount)
+	{
+		if(this.isSuspended)
+		{
+			throw new IllegalArgumentException("your account is suspended.");
+		}
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("withdraw amount has to be positive.");
+		}
+		if(this.overdraftOption == 1 && this.balance - amount < 0)
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			throw new IllegalArgumentException("you cant do this transaction cause it makes your balance negative.");
+		}
+		if(this.overdraftOption == 2 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		if(this.overdraftOption == 3 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NON_SUFFICIENT_FEE;
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		this.balance -= amount;
+	}
+	public void transfer(Account account1, double amount)
+	{
+		this.withdraw(amount);
+		account1.deposit(amount);
+		
+	}
+	
+	
+	
+	
+	
+	public double getOverdraftLimit()
+	{
+		return this.overdraftLimit;
+	}
+	public int getOverdraftOption()
+	{
+		return this.overdraftOption;
+	}
+	
+	
+	
+	
+	
+
+}

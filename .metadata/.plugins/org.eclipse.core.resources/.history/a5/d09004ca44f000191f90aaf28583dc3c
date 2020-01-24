@@ -1,0 +1,35 @@
+package CIBC_Design;
+
+public class AccountActivity {
+	
+	private int activityType;
+	private Account mainAccount;
+	private String mainAccountType;
+	
+	
+	
+	
+	
+	
+	public AccountActivity(Account ac1, int at1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			mainAccount = new CheckingAccount(ac1);
+			mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			mainAccount = new CreditAccount(ac1);
+			mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		activityType = at1;
+		
+	}
+	
+	
+	
+
+}

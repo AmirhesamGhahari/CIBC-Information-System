@@ -1,0 +1,72 @@
+package CIBC_Design;
+
+/**
+ * @author ahesam.gh
+ * 
+ * create a DemandLoanAccount object for a client who is terminating their account 
+ * by use of their personal information taken from Client object and the due amount.
+ *
+ */
+public class DemandLoanAccount {
+	
+	
+	/**
+	 * amount of Demand Loan
+	 */
+	private double amount;
+	/**
+	 * client responsible for this loan
+	 */
+	private Client client;
+	/**
+	 * boolean variable to check if the due amount is a debt or credit
+	 */
+	private boolean isDebt = true;
+	
+	
+	
+	/**
+	 * @param c1 object client
+	 * @param d1 due amount of client. if it is positive then it is a credit for them and if
+	 * it is negative it means it is a debt.
+	 * 
+	 * initiate an DemandLoanAccount object by a client object and its due amount
+	 */
+	public DemandLoanAccount(Client c1, double d1)
+	{
+		this.client = c1;
+		this.amount = d1;
+		
+		if(d1 > 0)
+		{
+			this.isDebt = false;
+		}
+	}
+	
+	
+	
+	
+	
+	/**
+	 * @return the due amount of this loan
+	 */
+	public double getAmount()
+	{
+		return this.amount;
+	}
+	/**
+	 * @return the client object responsible for this loan
+	 */
+	public Client getClient()
+	{
+		return this.client;
+	}
+	/**
+	 * @return a boolean object to check if the due amount is credit or debt.
+	 */
+	public boolean isCredit()
+	{
+		return !isDebt;
+	}
+
+}

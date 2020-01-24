@@ -1,0 +1,365 @@
+package CIBC_Design;
+
+
+public class TestFirst {
+
+	public static void main(String[] args) {
+		
+		
+		//initiate some clients.
+		
+		Client c1 = new Client(1111, "Hesam");
+		Client c2 = new Client(1112, "Tim");
+		Client c3 = new Client(1113, "Mike");
+		
+		
+		System.out.println("-----------------------");
+		//initiating some checking accounts
+		
+		CheckingAccount ca1 = new CheckingAccount(c1);
+		CheckingAccount ca2 = new CheckingAccount(c2);
+		CheckingAccount ca3 = new CheckingAccount(c3);
+		
+		
+		
+		System.out.println("-----------------------");
+		// doing some basic test on checking accounts
+
+		System.out.println(ca1.getBalance());
+		System.out.println(ca1.isAccountSuspended());
+		System.out.println(ca1.getClient().getName());
+		System.out.println(ca1.getClient().getSIN());
+		
+		
+		ca1.suspend();
+		System.out.println(ca1.isAccountSuspended());
+		ca1.reactivate();
+		System.out.println(ca1.isAccountSuspended());
+		
+		System.out.println(ca1.getAccountNumber());
+		System.out.println(ca1.getAccountType());
+		System.out.println(ca1.getAccountNumber());
+
+		
+		System.out.println("-----------------------");
+		// setting ca1 to no overdraft option
+		
+		ca1.setOverdraftOption(1);
+		ca1.setOverdraftLimit(0);
+		System.out.println(ca1.getOverdraftLimit());
+		ca1.deposit(1000);
+		ca1.deposit(500);
+		ca1.withdraw(300);
+		System.out.println(ca1.getBalance());
+		try 
+		{
+			ca1.withdraw(2000);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca1.getBalance());
+			}
+		
+		try 
+		{
+			ca1.withdraw(1000);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca1.getBalance());
+			}
+		
+		try 
+		{
+			ca1.withdraw(1000);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca1.getBalance());
+			}
+		
+		ca1.deposit(650);
+		System.out.println(ca1.getBalance());
+		ca1.suspend();
+		
+		try 
+		{
+			ca1.withdraw(500);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca1.getBalance());
+			}
+
+		ca1.reactivate();;
+
+
+
+
+		System.out.println("-----------------------");
+		// setting ca2 to option 2 or 3
+		
+		ca2.setOverdraftOption(2);
+		ca2.setOverdraftLimit(1000);
+		
+		ca2.deposit(500);
+		try 
+		{
+			ca2.withdraw(500);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca2.getBalance());
+			}
+		
+		System.out.println(ca2.getBalance());
+		
+		
+		try 
+		{
+			ca2.withdraw(500);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca2.getBalance());
+			}
+		
+		System.out.println(ca2.getBalance());
+		
+		try 
+		{
+			ca2.withdraw(600);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca2.getBalance());
+			}
+		
+		System.out.println(ca2.getBalance());
+		
+		try 
+		{
+			ca2.withdraw(125);
+		} catch (Exception e) 
+			{
+			System.out.println(e.getMessage());
+			System.out.println(ca2.getBalance());
+			}
+		
+		System.out.println(ca2.getBalance());
+		
+		
+		
+		
+		System.out.println("-----------------------");
+		// testing the transfer method
+		
+		ca2.deposit(50);
+		System.out.println(ca1.getBalance());
+		System.out.println(ca2.getBalance());
+		
+		ca1.transfer(ca2, 200);
+		System.out.println(ca1.getBalance());
+		System.out.println(ca2.getBalance());
+		
+		ca2.transfer(ca1, 400);
+		System.out.println(ca1.getBalance());
+		System.out.println(ca2.getBalance());
+		
+		try 
+		{
+			ca2.transfer(ca1, 400);
+			
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(ca1.getBalance());
+			System.out.println(ca2.getBalance());
+		}
+		
+
+		ca2.deposit(1025);
+		System.out.println(ca1.getBalance());
+		System.out.println(ca2.getBalance());
+		
+		
+		
+		System.out.println("-----------------------");
+		// creating some credit accounts objects
+		
+		
+		CreditAccount cr1 = new CreditAccount(c1);
+		CreditAccount cr2 = new CreditAccount(c2);
+		
+		
+		System.out.println(cr2.getBalance());
+		System.out.println(cr2.getAccountNumber());
+		System.out.println(cr2.getAccountType());
+		
+		System.out.println(cr2.getCreditType());
+		System.out.println(cr2.getCreditLimit());
+		
+		
+		
+		
+		System.out.println("-----------------------");
+		// making cr1 as option 1
+		
+		
+		cr1.setCreditLimit(2000);
+		System.out.println(cr1.getCreditType());
+		System.out.println(cr1.getCreditLimit());
+		cr1.withdraw(500);
+		System.out.println(cr1.getBalance());
+		cr1.withdraw(1000);
+		
+		try 
+		{
+			cr1.withdraw(1000);
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+
+		}
+		try 
+		{
+			cr1.withdraw(500);
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+
+		}
+		
+		try 
+		{
+			cr1.withdraw(200);
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+
+		}
+		
+		System.out.println(cr1.getBalance());
+		cr1.deposit(758);
+		System.out.println(cr1.getBalance());
+
+		
+		
+		System.out.println("-----------------------");
+		// making cr2 as option 2
+		
+		cr2.setCreditLimit(400);
+		
+		cr2.deposit(200);
+		try 
+		{
+			cr2.withdraw(800);
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr2.getBalance());
+
+		}
+		
+		try 
+		{
+			cr2.withdraw(400);
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr2.getBalance());
+
+		}
+
+		System.out.println(cr2.getBalance());
+		
+		
+		
+		System.out.println("-----------------------");
+		// testing transfering the money between two credit acounts
+		
+		System.out.println(cr1.getBalance());
+		System.out.println(cr2.getBalance());
+
+		
+		try 
+		{
+			cr1.transfer(cr2, 400);;
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+			System.out.println(cr2.getBalance());
+		}
+		
+		System.out.println(cr1.getBalance());
+		System.out.println(cr2.getBalance());
+		
+		
+		try 
+		{
+			cr1.transfer(cr2, 1000);;
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+			System.out.println(cr2.getBalance());
+		}
+		
+		cr1.deposit(829);
+		System.out.println(cr1.getBalance());
+		System.out.println(cr2.getBalance());
+		
+		
+		
+		
+		
+		System.out.println("-----------------------");
+		// testing transfering the money between credit account and checking account
+		
+		cr1.deposit(1600);
+		System.out.println(cr1.getBalance());
+		System.out.println(ca1.getBalance());
+		
+		
+		try 
+		{
+			cr1.transfer(ca1, 400);;
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+			System.out.println(ca1.getBalance());
+		}
+		
+		System.out.println(cr1.getBalance());
+		System.out.println(ca1.getBalance());
+
+		try 
+		{
+			cr1.transfer(ca1, 800);;
+		} catch (Exception e) 
+		{
+			System.out.println(e.getMessage());
+			System.out.println(cr1.getBalance());
+			System.out.println(ca1.getBalance());
+		}
+		
+		System.out.println(cr1.getBalance());
+		System.out.println(ca1.getBalance());
+
+		System.out.println(cr1.getCreditLimit());
+
+		
+
+		
+
+		
+		
+		
+	}
+
+}

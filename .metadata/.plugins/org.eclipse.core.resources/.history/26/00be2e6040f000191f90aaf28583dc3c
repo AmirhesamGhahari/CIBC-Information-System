@@ -1,0 +1,34 @@
+package CIBC_Design;
+
+public class TestSecond {
+	
+	
+	public static void main(String[] args) {
+			
+		
+		//initiate some clients.
+	
+			Client c1 = new Client(1111, "AmirHesam");
+			Client c2 = new Client(1112, "Rana");
+			
+			CheckingAccount ca1 = new CheckingAccount(c1);
+			CheckingAccount ca2 = new CheckingAccount(c2);
+		
+			ca1.setOverdraftOption(2);
+			ca1.setOverdraftLimit(1000);
+			
+			System.out.println(ca1.getAccountNumber());
+			System.out.println(ca1.getOverdraftLimit());
+			System.out.println(ca1.isAccountSuspended());
+			System.out.println(ca1.getClient().getSIN());
+			
+			
+			CheckingAccount copyCA1 = new CheckingAccount(ca1);
+			
+			System.out.println(copyCA1.getAccountNumber());
+			System.out.println(copyCA1.getOverdraftLimit());
+			System.out.println(copyCA1.isAccountSuspended());
+			System.out.println(copyCA1.getClient().getSIN());
+			
+	}	
+}

@@ -1,0 +1,693 @@
+package CIBC_Design;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+/**
+ * @author ahesam.gh
+ * 
+ * acountactivity class responsible for holding an activity object for every operation of account classes.
+ *
+ */
+public class AccountActivity implements Serializable{
+	
+	/**
+	 * type of activity. it represents:
+	 * 1 for withdraw an amount 
+	 * 2 for deposit an amount
+	 * 3 for creating an account
+	 * 4 for cancelling an account
+	 * 5 for suspending an account
+	 * 6 for reactivating an account
+	 * 7 for getting balance of an account
+	 * 8 for terminating an account
+	 * 9 for setting overdraft option of an account
+	 * 10 for setting credit limit or overdraft limit of an account
+	 * 11 for transferring an amount
+	 * 
+	 */
+	private int activityType;
+	/**
+	 * account that this activity has done for
+	 */
+	private Account mainAccount;
+	/**
+	 * type of the account that has done this activity
+	 */
+	private String mainAccountType;
+	/**
+	 * time of implementation of this activity
+	 */
+	private LocalDateTime time;
+	/**
+	 * balance of account responsible for this transaction AFTER the transaction
+	 */
+	private double accountBalance;
+
+	
+	
+	
+	/**
+	 * amount of withdraw or deposit from or to an account
+	 * this field will be further initiated only for withdraw, deposit, transfer activities 
+	 */
+	private double amount = -1;
+	/**
+	 * an demadloadaccount which is result of cancellation or termination of an account.
+	 * this object will be further instanniated only for cancel and terminate activity.
+	 */
+	private DemandLoanAccount demandLoan = null;
+	/**
+	 * variable showing if a withdraw from an account has been successful. 
+	 * this variable will be further set only for withdraw activity.
+	 */
+	private boolean isSuccessful = false;
+	/**
+	 * the destined account recieving an amount in a transfer activity.
+	 * this variable will be further instanciated only for transfer activity.
+	 */
+	private Account destinatedAccount = null;
+	/**
+	 * the newly set overdraft option of a checking account in this activity
+	 */
+	private int newODOption = -1;
+	/**
+	 * @param the newly set overdraft/credit limit of account responsible for this activity.
+	 */
+	private double newLimit = -1.00;
+	
+	
+	/**
+	 * static arraylist responsible for holding the objects of accountactivity that each is made for 
+	 * an activity.
+	 */
+	public static final ArrayList<AccountActivity> ACTIVITY_LOG = new ArrayList<AccountActivity>();
+	
+	
+	
+	
+	/**
+	 * c1
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * create an account
+	 * suspend an account
+	 * reactivate an account
+	 * getting the account balance
+	 */
+	public AccountActivity(Account ac1, int at1, double balance)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.activityType = at1;
+		this.accountBalance = balance;
+		this.time = LocalDateTime.now();
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	/**
+	 * c2
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param dla1 the demandloanaccount made for this activity
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * cancel an account
+	 * terminate an account
+	 * 
+	 */
+	public AccountActivity(Account ac1, int at1, DemandLoanAccount dla1, double balance)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.demandLoan = dla1;
+		this.accountBalance = balance;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	/**
+	 * c3
+	 *  * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param am1 amount that is going to be deposited into account
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * deposit an amount in an account
+	 */
+	public AccountActivity(Account ac1, int at1, double am1 , double balance)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.accountBalance = balance;
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.amount = am1;
+		
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	/**
+	 * c4
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param am1 amount that is going to be withdrawn from an account
+	 * @param b1 determines if this withdrawal has been successful
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * withdraw an amount from an account
+	 */
+	public AccountActivity(Account ac1, int at1, double am1, boolean b1, double balance)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.accountBalance = balance;
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.isSuccessful = b1;
+		this.amount = am1;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	/**
+	 * c5
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param ac2 account that is going to recieve the amount
+	 * @param am1 amount that is going to be transferred
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * transferring an amount from an account to another account
+	 */
+	public AccountActivity(Account ac1, int at1, Account ac2, double am1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		
+		this.mainAccount = ac1;
+		this.destinatedAccount = ac2;
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.amount = am1;
+		
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	/**
+	 * c6
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param odp the newly set overdraft option of a checking account in this activity
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 * setting the overdraft option of an account
+	 */
+	public AccountActivity(Account ac1, int at1, int odp, double balance)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.activityType = at1;
+		this.accountBalance = balance;
+		this.time = LocalDateTime.now();
+		this.newODOption = odp;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	/**
+	 * c7
+	 * @param ac1 account doing this activity
+	 * @param at1 type of activity
+	 * @param odp the newly set overdraft option of a checking account in this activity
+	 * @param balance balance of account responsible for this transaction AFTER the transaction
+	 * @param the newly set overdraft/credit limit of account responsible for this activity.
+	 * 
+	 * instanciate an accountactivity object.
+	 * this constructor is responsible for creation of an accountactivity object for these activities:
+	 *setting the overdraft/credit limit of an account
+	 */
+	public AccountActivity(Account ac1, int at1, int op, double balance, double amo)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.activityType = at1;
+		this.accountBalance = balance;
+		this.time = LocalDateTime.now();
+		this.newODOption = op;
+		this.newLimit = amo;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	
+	
+	/**
+	 * @return the account responsible for this activity
+	 */
+	public Account getAccount()
+	{
+		return this.mainAccount;
+	}
+	
+	/**
+	 * @return the type of account responsible for this activity
+	 */
+	public String getAccountType()
+	{
+		return this.mainAccountType;
+	}
+	
+	/**
+	 * @return the type of activity that has been done in this activity.it represents:
+	 * 1 for withdraw an amount 
+	 * 2 for deposit an amount
+	 * 3 for creating an account
+	 * 4 for cancelling an account
+	 * 5 for suspending an account
+	 * 6 for reactivating an account
+	 * 7 for getting balance of an account
+	 * 8 for terminating an account
+	 * 9 for setting overdraft option of an account
+	 * 10 for setting credit limit or overdraft limit of an account
+	 * 11 for transferring an amount
+	 */
+	public int getActivityType()
+	{
+		return this.activityType;
+	}
+	/**
+	 * @return the time that this activity is fulfilled.
+	 */
+	public LocalDateTime getTime()
+	{
+		return this.time;
+	}
+	
+	/**
+	 * @return the demandloanaccount yielded from cancellation or termination of an account
+	 */
+	public DemandLoanAccount getDemandLoan()
+	{
+		return this.demandLoan;
+	}
+	
+	/**
+	 * @return the amount of a withdraw or transfer or deposit activity
+	 */
+	public double getAmount()
+	{
+		return this.amount;
+	}
+	
+	/**
+	 * @return the boolean variable respresenting if the withdrawal has been successful
+	 */
+	public boolean isTransactionSuccessful()
+	{
+		return this.isSuccessful;
+	}
+	
+	/**
+	 * @return the destined account receiving an amount in a transfer. 
+	 */
+	public Account getDestinatedAccount()
+	{
+		return this.destinatedAccount;
+	}
+	
+	/**
+	 * @return the balance of accoun t responsible for this activity after the transaction
+	 */
+	public double getAccountBalance()
+	{
+		return this.accountBalance;
+	}
+	
+	/**
+	 * @return the newly set overdraft option of a checking account in this activity
+	 */
+	public int getNewODOption()
+	{
+		return this.newODOption;
+	}
+	
+	/**
+	 * @return the newly set overdraft/credit limit of account responsible for this activity.
+	 */
+	public double getNewLimit()
+	{
+		return this.newLimit;
+	}
+	
+	
+	
+	
+	/**
+	 *  static method to sort all the accountactivities inside the activitylog arraylist based on
+	 *  the increasing order of SIN number of clients who own the credit or checking accounts.
+	 *  in case of two or more activity have the same Sin number (so they have the same owner client) they
+	 *  are sorted by increasing order of time of implementation of activity.
+	 */
+	public static void sortActivityLog()
+	{
+		
+		int logSize = AccountActivity.ACTIVITY_LOG.size();
+		 
+		for(int i = 1; i < logSize; i++)
+		{
+			boolean isReached = false;
+			AccountActivity ithAccountActivity = AccountActivity.ACTIVITY_LOG.get(i);
+			int iSIN = AccountActivity.ACTIVITY_LOG.get(i).getAccount().getClient().getSIN();
+			LocalDateTime ithTime = AccountActivity.ACTIVITY_LOG.get(i).getTime();
+			AccountActivity.ACTIVITY_LOG.remove(i);
+			
+			int j = i - 1;
+			
+			while(j >= 0 && AccountActivity.ACTIVITY_LOG.get(j).getAccount().getClient().getSIN() >= iSIN && !isReached)
+			{
+				if(AccountActivity.ACTIVITY_LOG.get(j).getAccount().getClient().getSIN() == iSIN)
+				{
+					if(ithTime.isBefore(AccountActivity.ACTIVITY_LOG.get(j).getTime()))
+					{
+						j--;
+					}else 
+					{
+						isReached = true;
+					}
+					
+				}else 
+				{
+					j--;
+				}
+				
+			}
+			
+			AccountActivity.ACTIVITY_LOG.add(j + 1, ithAccountActivity);
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * static method responsible for completing the end of the day transactions.
+	 * this method apply pay per use fee for all the checking accounts that have had a withdrawal in this day 
+	 * that caused their debt be increased or their account balance become negative while their
+	 * overdraft option have been set on pay per use.
+	 * also this method implement all the account terminations with creating a demand loan account for that client and 
+	 * make the balance of their account equal to zero.
+	 * 
+	 * @return a arraylist of demand loan account objects for clients whose accounts have been terminated in this day.
+	 */
+	public static ArrayList<DemandLoanAccount> endOfDayProcess()
+	{
+		ArrayList<DemandLoanAccount> todaysDemandLoanAccounts = new ArrayList<DemandLoanAccount>();
+		LocalDateTime nowDT = LocalDateTime.now();
+		int day = nowDT.getDayOfYear();
+		int year = nowDT.getYear();
+		
+		HashSet<Account> selectedAccounts = new HashSet<Account>();
+		int logSize = AccountActivity.ACTIVITY_LOG.size();
+		
+	
+		for(int i = 0; i < logSize; i++)
+		{
+			
+			if(AccountActivity.ACTIVITY_LOG.get(i).getTime().getDayOfYear() == day && AccountActivity.ACTIVITY_LOG.get(i).getTime().getYear() == year)
+			{
+				if(AccountActivity.ACTIVITY_LOG.get(i).getAccountType().equals(CheckingAccount.ACCOUNT_TYPE) && 
+						AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 1 && 
+						AccountActivity.ACTIVITY_LOG.get(i).getAccountBalance() < 0)
+				{
+					CheckingAccount ca1 = (CheckingAccount) AccountActivity.ACTIVITY_LOG.get(i).getAccount();
+					if(ca1.getOverdraftOption() == 3)
+					{
+					selectedAccounts.add(ca1);
+					}
+				}
+					
+			}
+		}
+		
+		for(Account ac1 : selectedAccounts)
+		{
+			ac1.withdraw(CheckingAccount.PAY_PER_USE);
+		}
+		
+		
+		
+		for(int i = 0; i < logSize; i++)
+		{
+			if(AccountActivity.ACTIVITY_LOG.get(i).getTime().getDayOfYear() == day && AccountActivity.ACTIVITY_LOG.get(i).getTime().getYear() == year)
+			{
+		
+				if(AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 8)
+				{
+					todaysDemandLoanAccounts.add(AccountActivity.ACTIVITY_LOG.get(i).getDemandLoan());
+					Account terminatedAccount = AccountActivity.ACTIVITY_LOG.get(i).getAccount();
+					terminatedAccount.zeroBalance();
+				}
+			}
+		
+		}
+		
+		return todaysDemandLoanAccounts;	
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * static method responsible for completing the end of the day transactions.
+	 * this method applies monthly fixed fee to checking account whith overdraft option of fixed monthly pat
+	 * @return a arraylist of demand loan account objects for clients who have cancelled their account within this month.
+	 * besides, this method applies the intererst amount as a withdraw to all the credit and checking accounts that are in debt( with
+	 * negative balance).
+	 * also this method implement all the account cancellations with creating a demand loan account for that client and 
+	 * make the balance of their account equal to zero.
+	 */
+	public static ArrayList<DemandLoanAccount> endOfMonthProcess()
+	{
+		ArrayList<DemandLoanAccount> thisMonthsDemandLoanAccounts = new ArrayList<DemandLoanAccount>();
+		LocalDateTime nowDT = LocalDateTime.now();
+		int month = nowDT.getMonthValue();
+		int year = nowDT.getYear();
+		
+		HashSet<Account> selectedAccounts = new HashSet<Account>();
+		HashSet<Account> selectedAccountsForInterest = new HashSet<Account>();
+		int logSize = AccountActivity.ACTIVITY_LOG.size();
+		
+		
+		
+		for(int i = 0; i < logSize; i++)
+		{
+			if(AccountActivity.ACTIVITY_LOG.get(i).getAccountType().equals(CheckingAccount.ACCOUNT_TYPE))
+			{
+				CheckingAccount ca1 = (CheckingAccount) AccountActivity.ACTIVITY_LOG.get(i).getAccount();
+				if(ca1.getOverdraftOption() == 2)
+				{
+					selectedAccounts.add(ca1);
+				}
+				
+			}
+			
+		}
+		
+		for(int i = 0; i < logSize; i++)
+		{
+			if(AccountActivity.ACTIVITY_LOG.get(i).getAccountType().equals(CheckingAccount.ACCOUNT_TYPE))
+			{
+			if(AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 4 || AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 8 )
+			{
+				CheckingAccount ca1 = (CheckingAccount) AccountActivity.ACTIVITY_LOG.get(i).getAccount();
+				selectedAccounts.remove(ca1);
+			}
+			}
+		}
+		
+		for(Account ac1 : selectedAccounts)
+		{
+			ac1.withdraw(CheckingAccount.MONTHLY_FIXED_FEE);
+		}
+		
+		
+		
+		for(int i = 0; i < logSize; i++)
+		{
+			selectedAccountsForInterest.add(AccountActivity.ACTIVITY_LOG.get(i).getAccount());
+		}
+		for(int i = 0; i < logSize; i++)
+		{
+			if(AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 4 || AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 8 )
+			{
+				selectedAccountsForInterest.remove(AccountActivity.ACTIVITY_LOG.get(i).getAccount());
+			}
+			
+		}
+		
+		for(Account ac1 : selectedAccountsForInterest)
+		{
+			String t1 = ac1.getAccountType();
+			if(t1.equals(CheckingAccount.ACCOUNT_TYPE))
+			{
+				CheckingAccount cc1 = (CheckingAccount) ac1;
+				if(cc1.getBalanceForProcess() < 0)
+				{
+					double charge = (cc1.getBalanceForProcess() * -1) * (CheckingAccount.YEARLY_INTEREST_RATE/12);
+					cc1.withdraw(charge);
+				}
+			}
+			if(t1.equals(CreditAccount.ACCOUNT_TYPE))
+			{
+				CreditAccount cp1 = (CreditAccount) ac1;
+				if(cp1.getBalanceForProcess() < 0)
+				{
+					double charge = (cp1.getBalanceForProcess() * -1) * (CreditAccount.YEARLY_INTEREST_RATE/12);
+					cp1.withdraw(charge);
+				}
+			}
+		}
+		
+
+		for(int i = 0; i < logSize; i++)
+		{
+			
+			if(AccountActivity.ACTIVITY_LOG.get(i).getTime().getMonthValue() == month && AccountActivity.ACTIVITY_LOG.get(i).getTime().getYear() == year)
+			{
+			
+				if(AccountActivity.ACTIVITY_LOG.get(i).getActivityType() == 4)
+				{
+					thisMonthsDemandLoanAccounts.add(AccountActivity.ACTIVITY_LOG.get(i).getDemandLoan());
+					Account terminatedAccount = AccountActivity.ACTIVITY_LOG.get(i).getAccount();
+					terminatedAccount.zeroBalance();
+				}
+			}
+		}
+		
+		return thisMonthsDemandLoanAccounts;
+		
+	}		
+	
+	
+	
+	
+	public static void saveActivityLog()
+	{
+		try 
+		{
+			FileOutputStream fileOut = new FileOutputStream("activityLog.ser");
+			ObjectOutputStream outputStream = new ObjectOutputStream(fileOut);
+			outputStream.writeObject(AccountActivity.ACTIVITY_LOG);
+			outputStream.close();
+			fileOut.close();
+			System.out.println("all the activities were successfully saved.");
+
+		} catch (Exception e)
+		{
+			System.out.println("your object was not successfully saved.");
+		}
+		
+	}
+		
+}

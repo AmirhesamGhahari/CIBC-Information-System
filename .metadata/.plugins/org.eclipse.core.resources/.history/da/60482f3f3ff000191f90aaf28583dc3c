@@ -1,0 +1,17 @@
+package CIBC_Design;
+
+public class TestSecond {
+	
+			//initiate some clients.
+	
+			Client c1 = new Client(1111, "Hesam");
+			Client c2 = new Client(1112, "Tim");
+			
+			CheckingAccount ca1 = new CheckingAccount(c1);
+			CheckingAccount ca2 = new CheckingAccount(c2);
+		
+			
+			
+			
+			
+}

@@ -1,0 +1,93 @@
+package CIBC_Design;
+
+public class CreditAccount extends Account {
+	
+	public static final int CREDIT_LIMIT_EXCEED = 29;
+	public static final int CREDIT_TYPE_TRESHOLD = 1000;
+	public static final String ACCOUNT_TYPE = "Credit";
+	
+	
+	
+
+	private int creditType;
+	private double creditLimit;
+	
+	
+	public CreditAccount(Client client1)
+	{
+		super(client1);
+		creditType = 2;
+		creditLimit = 500;
+	}
+	
+	public void setCreditLimit(double amount)
+	{
+		if(amount < 0)
+		{
+			throw new IllegalArgumentException("credit amount has to be positive.");
+		}
+		
+		this.creditLimit = amount;
+		
+		if(this.creditLimit > CreditAccount.CREDIT_TYPE_TRESHOLD)
+		{
+			this.creditType = 1;
+		}
+		
+	}
+	public String getAccountType()
+	{
+		return CreditAccount.ACCOUNT_TYPE;
+	}
+	public void withdraw(double amount)
+	{
+		if(this.isSuspended)
+		{
+			throw new IllegalArgumentException("your account is suspended.");
+		}
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("withdraw amount has to be positive.");
+		}
+		if(this.creditType == 2 && this.balance + this.creditLimit < amount)
+		{
+			throw new IllegalArgumentException("you cant do this transaction cause you dont have enough credit.");
+		}
+		if(this.creditType == 1 && this.balance + this.creditLimit < amount)
+		{
+			this.balance -= CreditAccount.CREDIT_LIMIT_EXCEED;
+			throw new IllegalArgumentException("you cant do this transaction cause you dont have enough credit.");
+		}
+		
+		this.balance -= amount;
+	}
+	public void transfer(Account account1, double amount)
+	{
+		this.withdraw(amount);
+		account1.deposit(amount);
+	}
+	
+	
+	
+	
+	
+	
+	
+	public int getCreditType()
+	{
+		return this.creditType;
+	}
+	public double getCreditLimit()
+	{
+		return this.creditLimit;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

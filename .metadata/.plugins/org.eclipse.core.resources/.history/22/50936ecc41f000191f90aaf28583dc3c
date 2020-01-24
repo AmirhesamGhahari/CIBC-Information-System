@@ -1,0 +1,21 @@
+package CIBC_Design;
+
+public class AccountActivity {
+	
+	private int activityType;
+	private Account mainAccount;
+	
+	
+	
+	
+	
+	
+	public AccountActivity(Account ac1, int at1)
+	{
+		
+	}
+	
+	
+	
+
+}

@@ -1,0 +1,11 @@
+package CIBC_Design;
+
+public class CheckingAccount {
+	
+	private Client owner;
+	private int cardNumber;
+	boolean isSsuspended;
+	
+	
+
+}

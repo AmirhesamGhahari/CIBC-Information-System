@@ -1,0 +1,32 @@
+package CIBC_Design;
+
+
+public class TestFirst {
+
+	public static void main(String[] args) {
+		
+		Client c1 = new Client(3243, "Hesam");
+		
+		String s1 = c1.getName();
+		System.out.println(s1);
+		
+		DemandLoanAccount d1 = new DemandLoanAccount(c1, 234.32);
+		
+		System.out.println(d1.getAmount());
+		
+		
+		CheckingAccount m1 = new CheckingAccount(c1);
+		System.out.println(m1.getBalance());
+		
+		m1.deposit(1230);
+		System.out.println(m1.getBalance());
+		
+		m1.withdraw(100);
+		System.out.println(m1.getBalance());
+	
+		
+		
+		
+	}
+
+}

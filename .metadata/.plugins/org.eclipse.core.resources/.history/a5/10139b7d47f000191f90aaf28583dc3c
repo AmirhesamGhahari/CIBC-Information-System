@@ -1,0 +1,75 @@
+package CIBC_Design;
+
+public class TestSecond {
+	
+	
+	public static void main(String[] args) {
+			
+		
+		//testing the copy constructors of credit and checking account
+	
+			Client c1 = new Client(1111, "AmirHesam");
+			Client c2 = new Client(1112, "Rana");
+			
+			CheckingAccount ca1 = new CheckingAccount(c1);
+			CheckingAccount ca2 = new CheckingAccount(c2);
+		
+			ca1.setOverdraftOption(2);
+			ca1.setOverdraftLimit(1000);
+			
+			System.out.println(ca1.getAccountNumber());
+			System.out.println(ca1.getOverdraftLimit());
+			System.out.println(ca1.isAccountSuspended());
+			System.out.println(ca1.getClient().getSIN());
+			
+			
+			CheckingAccount copyCA1 = new CheckingAccount(ca1);
+			
+			System.out.println(copyCA1.getAccountNumber());
+			System.out.println(copyCA1.getOverdraftLimit());
+			System.out.println(copyCA1.isAccountSuspended());
+			System.out.println(copyCA1.getClient().getSIN());
+			
+			System.out.println("-----------------------");
+			
+			
+			CreditAccount cr1 = new CreditAccount(c1);
+			cr1.setCreditLimit(2000);
+			
+			System.out.println(cr1.getAccountNumber());
+			System.out.println(cr1.getCreditType());
+			System.out.println(cr1.isAccountSuspended());
+			System.out.println(cr1.getClient().getSIN());
+			
+			CreditAccount copyCR1 = new CreditAccount(cr1);
+			
+			System.out.println(copyCR1.getAccountNumber());
+			System.out.println(copyCR1.getCreditType());
+			System.out.println(copyCR1.isAccountSuspended());
+			System.out.println(copyCR1.getClient().getSIN());
+			
+			System.out.println("-----------------------");
+			System.out.println("-----------------------");
+			System.out.println("-----------------------");
+			
+			
+			double d1 = ca1.getBalance();
+			System.out.println(d1);
+			System.out.println(AccountActivity.ACTIVITY_LOG.size());
+			AccountActivity re1 = AccountActivity.ACTIVITY_LOG.get(0);
+			System.out.println(re1.getAccountType());
+			System.out.println(re1.getActivityType());
+			System.out.println(ca1.getAccountNumber());
+
+			System.out.println(re1.getAccount().getAccountNumber());
+
+			
+			
+			
+
+			
+
+			
+			
+	}	
+}

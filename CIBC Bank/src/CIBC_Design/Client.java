@@ -1,0 +1,58 @@
+package CIBC_Design;
+
+import java.io.Serializable;
+
+/**
+ * @author ahesam.gh
+ * 
+ * Public class Client, responsible for making object of real people
+ * who are becoming CIBC clients by their personal information.
+ *
+ */
+public class Client implements Serializable{
+	
+	/**
+	 * SIN number of a client
+	 */
+	private int SIN;
+	/**
+	 * name of a client
+	 */
+	private String name;
+	
+	
+	
+	/**
+	 * @param sinN SIN number of client
+	 * @param clientN name of client.
+	 * 
+	 * create a client object by use of its name and SIN number. 
+	 */
+	public Client(int sinN, String clientN)
+	{
+		this.SIN = sinN;
+		this.name = clientN;
+	}
+	
+	
+	
+	
+	/**
+	 * @return name of client
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
+	/**
+	 * @return SIN number of a client
+	 */
+	public int getSIN()
+	{
+		return this.SIN;
+	}
+	
+	
+
+
+}

@@ -1,0 +1,25 @@
+package CIBC_Design;
+
+public abstract class Account {
+	
+	protected Client owner;
+	protected boolean isSuspended;
+	
+	
+	
+	public Account()
+	{
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+}

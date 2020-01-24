@@ -1,0 +1,103 @@
+package CIBC_Design;
+
+import java.util.Random;
+
+public abstract class Account {
+	
+	protected Client owner;
+	protected boolean isSuspended;
+	protected int cardNumber;
+	protected int overOption;
+	protected double balance;
+	protected double overLimit;
+	
+	
+	public Account(Client o1)
+	{
+		this.owner = o1;
+		this.createAccount();
+		
+	}
+	
+	
+	private final void createAccount()
+	{
+		Random rand = new Random();
+		int n1 = rand.nextInt(90000000) + 10000000;
+		this.cardNumber = n1;
+		
+		isSuspended = false;
+		overOption = 1;
+		overLimit = 0;
+		balance = 0;
+	}
+	public void setOverLimit(double d1)
+	{
+		if( d1 < 0)
+		{
+			throw new IllegalArgumentException("limit of overdraft has to be positive.");
+		}
+		
+		this.overLimit = d1;
+		
+	}
+	public void suspend()
+	{
+		this.isSuspended = true;
+	}
+	public void reactivate()
+	{
+		this.isSuspended = false;
+	}
+	public void deposit(double amount)
+	{
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("you cant deposit negative amount");
+		}
+		this.balance += amount;
+	}
+	public double getBalance()
+	{
+		return this.balance;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public int getCardNumber()
+	{
+		return this.cardNumber;
+	}
+	public Client getClient()
+	{
+		return this.owner;
+	}
+	public boolean isCardSuspended()
+	{
+		return isSuspended;
+	}
+	public int getOverOption()
+	{
+		return this.overOption;
+	}
+	public double getOverLimit()
+	{
+		return this.overLimit;
+	}
+
+	
+	
+	public abstract void withdraw(double amount);
+	public abstract void setOverOption(int option);
+	public abstract String getAccountType();
+	public abstract void transfer(Account account1, double amount);
+	
+
+	
+
+}

@@ -1,0 +1,157 @@
+package CIBC_Design;
+
+import java.util.Random;
+
+public class CheckingAccount {
+	
+	public static final int NSF = 25;
+	public static final int MFF = 4;
+	public static final int PPU = 5;
+	
+	private Client owner;
+	private int cardNumber;
+	private boolean isSsuspended;
+	private int overdraftOption;
+	private double balance;
+	private double overdraftLimit;
+	
+	
+	
+	public CheckingAccount(Client o1)
+	{
+		this.owner = o1;
+		this.createAccount();
+	}
+	
+	
+	public int getCardNumber()
+	{
+		return this.cardNumber;
+	}
+	
+	
+	
+	
+	private void createAccount()
+	{
+		Random rand = new Random();
+		int n1 = rand.nextInt(90000000) + 10000000;
+		this.cardNumber = n1;
+		
+		isSsuspended = false;
+		overdraftOption = 1;
+		overdraftLimit = 0;
+		balance = 0;
+	}
+	
+	
+	
+	
+	public void deposit(double amount)
+	{
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("you cant deposit negative amount");
+		}
+		this.balance += amount;
+	}
+	
+	
+	
+	
+	public void suspend()
+	{
+		this.isSsuspended = true;
+	}
+	
+	
+	
+	
+	public void reactivate()
+	{
+		this.isSsuspended = false;
+	}
+	
+	
+	
+	
+	public double getBalance()
+	{
+		return this.balance;
+	}
+	
+	
+	
+	
+	public void setOverdraftOption(int o1)
+	{
+		if(o1 > 3 || o1 < 1)
+		{
+			throw new IllegalArgumentException("there is only 3 available overdraft options you can choose.");
+		}
+		
+		if(o1 == 1 && this.balance < 0)
+		{
+			throw new IllegalArgumentException("you have to pay your overdue debt first before setting your overdraft option to no protection.");
+		}
+		
+		this.overdraftOption = o1;
+	}
+	
+	
+	
+	
+	public void setLimit(double d1)
+	{
+		if( d1 < 0)
+		{
+			throw new IllegalArgumentException("limit of overdraft has to be positive.");
+		}
+		
+		double t1 = balance * (-1);
+		if(balance < 0 && t1 > d1 )
+		{
+			throw new IllegalArgumentException("you cant decrease your overdraft limit to an amount less that you owe.");
+		}
+		if( d1 == 0)
+		{
+			this.setOverdraftOption(1);
+		}
+		
+		this.overdraftLimit = d1;
+		
+	}
+	
+	
+	
+	public void withdraw(double amount)
+	{
+		if(this.isSsuspended)
+		{
+			throw new IllegalArgumentException("your account is suspended.");
+		}
+		if( amount <= 0)
+		{
+			throw new IllegalArgumentException("withdraw amount has to be positive.");
+		}
+		if(this.overdraftOption == 1 && this.balance - amount < 0)
+		{
+			this.balance -= CheckingAccount.NSF;
+			throw new IllegalArgumentException("you cant do this transaction cause it makes your balance negative.");
+		}
+		if(this.overdraftOption == 2 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NSF;
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		if(this.overdraftOption == 3 && this.balance - amount < ((-1) * this.overdraftLimit))
+		{
+			this.balance -= CheckingAccount.NSF;
+			throw new IllegalArgumentException("you cant do this transaction cause it exceeds your oveddraft limit.");
+		}
+		this.balance -= amount;
+	}
+	
+	
+
+}

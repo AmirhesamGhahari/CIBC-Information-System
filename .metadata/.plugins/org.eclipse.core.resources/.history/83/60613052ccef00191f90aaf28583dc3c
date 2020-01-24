@@ -1,0 +1,33 @@
+package CIBC_Design;
+
+
+public class TestFirst {
+
+	public static void main(String[] args) {
+		
+		
+		//initiate some clients.
+		
+		Client c1 = new Client(1111, "Hesam");
+		Client c2 = new Client(1112, "Tim");
+		Client c3 = new Client(1113, "Mike");
+		
+		
+		
+		//inititiating some checking accounts and testing methods on those.
+		
+		CheckingAccount ca1 = new CheckingAccount(c1);
+		CheckingAccount ca2 = new CheckingAccount(c2);
+
+		System.out.println(ca1.getBalance());
+		System.out.println(ca1.isAccountSuspended());
+		System.out.println(ca1.getClient().getName());
+		System.out.println(ca1.getClient().getSIN());
+
+	
+		
+		
+		
+	}
+
+}

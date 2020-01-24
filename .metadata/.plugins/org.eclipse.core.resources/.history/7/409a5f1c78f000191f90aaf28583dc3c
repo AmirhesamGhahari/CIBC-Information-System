@@ -1,0 +1,197 @@
+package CIBC_Design;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+public class AccountActivity {
+	
+	private int activityType;
+	private Account mainAccount;
+	private String mainAccountType;
+	private LocalDateTime time;
+	
+	private double amount = -1;
+	private DemandLoanAccount demandLoan = null;
+	private boolean isSuccessful = false;
+	private Account destinatedAccount = null;
+	
+	
+	/**
+	 * watch for public and final
+	 * also is arraylist the best option????
+	 */
+	public static final ArrayList<AccountActivity> ACTIVITY_LOG = new ArrayList<AccountActivity>();
+	
+	
+	
+	
+	public AccountActivity(Account ac1, int at1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CheckingAccount(ac1);
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CreditAccount(ac1);
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	public AccountActivity(Account ac1, int at1, DemandLoanAccount dla1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.mainAccount = ac1;
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.demandLoan = dla1;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	public AccountActivity(Account ac1, int at1, double am1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CheckingAccount(ac1);
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CreditAccount(ac1);
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.amount = am1;
+		
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	public AccountActivity(Account ac1, int at1, double am1, boolean b1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CheckingAccount(ac1);
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CreditAccount(ac1);
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.isSuccessful = b1;
+		this.amount = am1;
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	public AccountActivity(Account ac1, int at1, Account ac2, double am1)
+	{
+		String accountType = ac1.getAccountType();
+		if(accountType.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CheckingAccount(ac1);
+			this.mainAccountType = CheckingAccount.ACCOUNT_TYPE;
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.mainAccount = new CreditAccount(ac1);
+			this.mainAccountType = CreditAccount.ACCOUNT_TYPE;
+		}
+		
+		String accountType1 = ac2.getAccountType();
+		if(accountType1.equals(CheckingAccount.ACCOUNT_TYPE))
+		{
+			this.destinatedAccount = new CheckingAccount(ac2);
+		}
+		if(accountType.equals(CreditAccount.ACCOUNT_TYPE))
+		{
+			this.destinatedAccount = new CreditAccount(ac2);
+		}
+		
+		
+		
+		this.activityType = at1;
+		this.time = LocalDateTime.now();
+		this.amount = am1;
+		
+		
+		AccountActivity.ACTIVITY_LOG.add(this);
+
+	}
+	
+	
+	
+	
+	public Account getAccount()
+	{
+		return this.mainAccount;
+	}
+	
+	public String getAccountType()
+	{
+		return this.mainAccountType;
+	}
+	
+	public int getActivityType()
+	{
+		return this.activityType;
+	}
+	public LocalDateTime getTime()
+	{
+		return this.time;
+	}
+	
+	public DemandLoanAccount getDemandLoan()
+	{
+		return this.demandLoan;
+	}
+	
+	public double getAmount()
+	{
+		return this.amount;
+	}
+	
+	public boolean isTransactionSuccessful()
+	{
+		return this.isSuccessful;
+	}
+	
+	public Account getDestinatedAccount()
+	{
+		return this.destinatedAccount;
+	}
+	
+	
+	
+}

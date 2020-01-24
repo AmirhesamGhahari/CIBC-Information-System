@@ -1,0 +1,67 @@
+package CIBC_Design;
+
+public class TestThird {
+
+	public static void main(String[] args) {
+	
+		
+		
+		Client c1 = new Client(1111, "AmirHesam");
+		Client c2 = new Client(1112, "Rana");
+		
+		CheckingAccount ca1 = new CheckingAccount(c1);
+		CheckingAccount ca2 = new CheckingAccount(c2);
+		ca1.setOverdraftOption(2);
+		ca1.setOverdraftLimit(1000);
+		
+		
+		//testing createaccount and setdraftlimit and setdraftoption
+		
+		System.out.println(AccountActivity.ACTIVITY_LOG.size());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(1).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(2).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAccountType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getAccountType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAmount());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getDestinatedAccount());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(3).getAccount().getAccountNumber());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getAccount().getAccountNumber());
+		
+		CheckingAccount v2 = (CheckingAccount) AccountActivity.ACTIVITY_LOG.get(0).getAccount();
+		System.out.println(v2.getOverdraftLimit());
+
+		CheckingAccount v1 = (CheckingAccount) AccountActivity.ACTIVITY_LOG.get(3).getAccount();
+		System.out.println(v1.getOverdraftLimit());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(0).getTime());
+
+
+		System.out.println("-----------------------");
+		System.out.println("-----------------------");
+		
+		ca1.deposit(1500);
+		ca2.deposit(300);
+		ca1.withdraw(400);
+		ca1.withdraw(100);
+		
+		
+		System.out.println(AccountActivity.ACTIVITY_LOG.size());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(7).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(5).getActivityType());
+		System.out.println(AccountActivity.ACTIVITY_LOG.get(5).getAmount());
+
+
+		
+		
+
+
+
+
+
+
+
+
+	}
+
+}
